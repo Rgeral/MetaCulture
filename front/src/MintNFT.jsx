@@ -14,10 +14,7 @@ export default function MintNFT() {
         const response = await fetch('YOUR_PHOTO_URL_HERE');
         const data = await response.blob();
         setPhoto(URL.createObjectURL(data));
-        // Показываем текст после 2 секунд ожидания
-        setTimeout(() => {
-          setLoading(false);
-        }, 500);
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching photo:', error);
         setLoading(false);
