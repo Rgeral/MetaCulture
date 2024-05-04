@@ -1,5 +1,23 @@
 {
   "dependencies": {
-    "express": "^4.19.2"
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "xrpl": "^3.0.0"
+  },
+  "nodemonConfig": {
+    "execMap": {
+      "js": "node -r dotenv/config"
+    },
+    "watch": [
+      "src/",
+      ".env"
+    ],
+    "env": {
+      "NODE_ENV": "development"
+    },
+    "ext": "js,json"
+  },
+  "scripts": {
+    "start": "nodemon server.js"
   }
 }
