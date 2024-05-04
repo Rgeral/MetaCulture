@@ -15,10 +15,10 @@ const Chatbox = () => {
     const combinedMessages = [];
     for (let i = 0; i < Math.max(userMessages.length, apiResponses.length); i++) {
       if (userMessages[i]) {
-        combinedMessages.push(userMessages[i]);
+        combinedMessages.push({ content: userMessages[i], isUserMessage: true });
       }
       if (apiResponses[i]) {
-        combinedMessages.push(apiResponses[i]);
+        combinedMessages.push({ content: apiResponses[i], isUserMessage: false });
       }
     }
     setDisplayedMessages(combinedMessages);
@@ -31,7 +31,7 @@ const Chatbox = () => {
       const response = await fetch('https://dc11-185-144-24-217.ngrok-free.app/api/v1/chat/chat-mistral', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({ message }),
       });
@@ -55,24 +55,31 @@ const Chatbox = () => {
   };
 
   return (
-    <div>
-      <h2>Chatbox</h2>
-      <div style={{ width: '600px', height: '400px', overflowY: 'scroll', border: '1px solid #ccc', marginBottom: '10px' }}>
+    <div className="max-w-xl mx-auto">
+      <h2 className="text-xl font-bold mb-4">Chatbox</h2>
+      <div className="max-h-80 overflow-y-auto border border-gray-300 mb-4 p-4">
         {displayedMessages.map((message, index) => (
-          <div key={index} style={{ padding: '5px', textAlign: index % 2 === 0 ? 'left' : 'right' }}>
-            {message}
+          <div key={index} className={`flex items-start mb-4 ${message.isUserMessage ? 'flex-row-reverse' : ''}`}>
+              <img 
+                src={message.isUserMessage ? 'user_profile.jpeg' : 'fred.jpeg'}
+                alt="Profile"
+                className="w-8 h-8 rounded-full mr-2"
+              />
+            <div className={`p-2 rounded ${message.isUserMessage ? 'bg-blue-100 text-right' : 'bg-gray-100 text-left'}`}>
+              {message.content}
+            </div>
           </div>
         ))}
       </div>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
+      <form onSubmit={handleSubmit} className="flex items-center">
+        <textarea
+          className="w-full px-3 py-2 border border-gray-300 rounded mr-2 focus:outline-none focus:border-blue-500"
           value={inputValue}
           onChange={handleInputChange}
           placeholder="Type your message..."
-          style={{ marginRight: '10px' }}
+          rows="3"
         />
-        <button type="submit">Send</button>
+        <button type="submit" className="py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none">Send</button>
       </form>
     </div>
   );
