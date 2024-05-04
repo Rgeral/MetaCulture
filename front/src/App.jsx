@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Test from './Test';
 import MintNFT from './MintNFT';
 import './App.css'
+import Chatbox from './chatbox';
 import Welcome from './Welcome';
 
 function App() {
@@ -12,11 +13,9 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/test" element={<Test />} />
-<<<<<<< HEAD
+          <Route path="/chat" element ={<Chatbox />} />
           <Route path="/welcome" element={<Welcome/>}/>
-=======
           <Route path="/mint-nft" element={<MintNFT />} />
->>>>>>> main
         </Routes>
       </BrowserRouter>
     </>
