@@ -12,7 +12,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/test" element={<Test />} />
-          <Route path="/welcome" element={<Welcome/>}/>
+          <Route path="/welcome" element={<Welcome />} />
           <Route path="/mint-nft" element={<MintNFT />} />
         </Routes>
       </BrowserRouter>
