@@ -40,3 +40,19 @@
 .read-the-docs {
   color: #888;
 }
+
+.Button {
+  color: white;
+  border-radius: 10px;
+  padding: 18px 40px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 19px;
+  margin: 4px 2px;
+  cursor: pointer;
+  background-color: black;
+  margin: 15px;
+  box-shadow: 0 3px 8px rgba(202, 202, 202, 0.2);
+}
+
