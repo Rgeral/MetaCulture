@@ -1,8 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Test from './Test'; 
-import MintNFT from './MintNFT'; 
-
+import Test from './Test';
+import MintNFT from './MintNFT';
 import './App.css';
 
 function App() {
