@@ -33,8 +33,8 @@ const Chatbox = () => {
       <h2>Chatbox</h2>
       <div style={{ width: '600px' , height: '400px', overflowY: 'scroll', border: '1px solid #ccc', marginBottom: '10px' }}>
         {messages.map((message, index) => (
-          <div key={index} style={{ padding: '5px', textAlign: message.fromUser ? 'right' : 'left' }}>
-            {message.text}
+          <div key={index} style={{ padding: '5px', textAlign: message.fromUser ? 'left' : 'right' }}>
+            {'Username : ' + message.text}
           </div>
         ))}
       </div>
