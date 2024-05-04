@@ -6,7 +6,6 @@ from flask_cors import CORS
 def creat_app():
     app = Flask(__name__)
     CORS(app)
-    # app.config.from_json("config.json")
 
     # Custom error interception
     from web.error_controller import error_controller
