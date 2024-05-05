@@ -9,7 +9,7 @@ function Welcome() {
           <p className="mt-6 text-lg leading-7 text-white-800">Let's start experiment</p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
             <a
-              href="/test"
+              href="/game"
               className="rounded-md bg-indigo-600 px-7 py-5 text-m font-semibold text-white shadow-sm hover:bg-indigo-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               Start experiment!

@@ -1,15 +1,13 @@
 import { useState } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 function EmailUserPage() {
-  // State pour stocker la valeur de l'e-mail
-  const [email, setEmail] = useState('');
+ const [email, setEmail] = useState('');
+ const navigate = useNavigate();
 
-  // Fonction de gestionnaire d'événements pour soumettre le formulaire
-  const handleSubmit = async (e) => {
-    e.preventDefault(); // Empêcher le comportement par défaut du formulaire (rechargement de la page)
+ const handleSubmit = async (e) => {
+    e.preventDefault();
 
     try {
-      // Envoyer les données de l'e-mail au serveur via une requête POST
       const response = await fetch('URL_DU_BACKEND', {
         method: 'POST',
         headers: {
@@ -18,31 +16,25 @@ function EmailUserPage() {
         body: JSON.stringify({ email }),
       });
 
-      // Vérifier si la requête a réussi
       if (response.ok) {
-        // Réinitialiser le champ d'e-mail après l'envoi réussi
         setEmail('');
-        // Afficher une confirmation à l'utilisateur
         alert('E-mail envoyé avec succès !');
+        navigate('/mint-nft');
       } else {
-        // Gérer les erreurs de la requête
         throw new Error('Erreur lors de l\'envoi de l\'e-mail');
       }
     } catch (error) {
-      // Gérer les erreurs d'envoi
       console.error('Erreur lors de l\'envoi de l\'e-mail :', error);
       alert('Erreur lors de l\'envoi de l\'e-mail. Veuillez réessayer plus tard.');
     }
-  };
+ };
 
   return (
     <main className="grid min-h-full place-items-center bg-#213547 px-6 py-24 sm:py-32 lg:px-8">
       <div className="text-center">
         <h1 className="mt-4 text-3xl font-bold tracking-tight text-white-900 sm:text-5xl">EMAIL</h1>
         <p className="mt-6 text-lg leading-7 text-white-800"></p>
-        
-        {/* Formulaire d'envoi d'e-mail */}
-        <form onSubmit={handleSubmit} className="mt-10 flex flex-col items-center justify-center gap-y-6">
+          <form onSubmit={handleSubmit} className="mt-10 flex flex-col items-center justify-center gap-y-6">
           <input
             type="email"
             value={email}
