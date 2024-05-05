@@ -9,40 +9,74 @@ const router = express.Router();
 // const app = express();
 //const upload = multer({ dest: 'uploads/' }); // Set up multer for handling file uploads
 //ipfs = ipfsAPI('localhost', '5173', { protocol: 'http' }); // Connect to IPFS daemon
-
-// Route GET pour la racine
-router.get('/', async (req, res) => {
-        const formData = new FormData();
-        const src = "./apple.jpg";
-        
-        const file = fs.createReadStream(src)
-        formData.append('file', file)
-        
-        const pinataMetadata = JSON.stringify({
-          name: 'Apple nft',
-        });
-        formData.append('pinataMetadata', pinataMetadata);
-        
-        const pinataOptions = JSON.stringify({
-          cidVersion: 0,
-        })
-        formData.append('pinataOptions', pinataOptions);
+const pushIpfs = async() => {
+    const formData = new FormData();
+    const src = "./apple.jpg";
     
-        try{
-          const res = await axios.post("https://api.pinata.cloud/pinning/pinFileToIPFS", formData, {
-            maxBodyLength: "Infinity",
-            headers: {
-              'Content-Type': `multipart/form-data; boundary=${formData._boundary}`,
-              'Authorization': `Bearer ${JWT}`
-            }
-          });
-          console.log("Result");
-          console.log(res.data);
-          const url = "https://ipfs.io/ipfs/" + res.data['IpfsHash'];
-          console.log(url);
-        } catch (error) {
-          console.log(error);
+    const file = fs.createReadStream(src)
+    formData.append('file', file)
+    
+    const pinataMetadata = JSON.stringify({
+      name: 'Apple nft',
+    });
+    formData.append('pinataMetadata', pinataMetadata);
+    
+    const pinataOptions = JSON.stringify({
+      cidVersion: 0,
+    })
+    formData.append('pinataOptions', pinataOptions);
+
+    try{
+      const res = await axios.post("https://api.pinata.cloud/pinning/pinFileToIPFS", formData, {
+        maxBodyLength: "Infinity",
+        headers: {
+          'Content-Type': `multipart/form-data; boundary=${formData._boundary}`,
+          'Authorization': `Bearer ${JWT}`
         }
+      });
+      console.log("Result");
+      console.log(res.data);
+      const url = "https://ipfs.io/ipfs/" + res.data['IpfsHash'];
+      console.log(url);
+    } catch (error) {
+      console.log(error);
+    }
+};
+// Route GET pour la racine
+router.get('/', async (req,res) => {
+        // const formData = new FormData();
+        // const src = "./apple.jpg";
+        
+        // const file = fs.createReadStream(src)
+        // formData.append('file', file)
+        
+        // const pinataMetadata = JSON.stringify({
+        //   name: 'Apple nft',
+        // });
+        // formData.append('pinataMetadata', pinataMetadata);
+        
+        // const pinataOptions = JSON.stringify({
+        //   cidVersion: 0,
+        // })
+        // formData.append('pinataOptions', pinataOptions);
+    
+        // try{
+        //   const res = await axios.post("https://api.pinata.cloud/pinning/pinFileToIPFS", formData, {
+        //     maxBodyLength: "Infinity",
+        //     headers: {
+        //       'Content-Type': `multipart/form-data; boundary=${formData._boundary}`,
+        //       'Authorization': `Bearer ${JWT}`
+        //     }
+        //   });
+        //   console.log("Result");
+        //   console.log(res.data);
+        //   const url = "https://ipfs.io/ipfs/" + res.data['IpfsHash'];
+        //   console.log(url);
+        // } catch (error) {
+        //   console.log(error);
+        // }
+        const ipfs_url = await pushIpfs();
+        await res.send(ipfs_url);
     });
 // router.post('/',upload.single('image'), async (req, res) => {
 //     try {
