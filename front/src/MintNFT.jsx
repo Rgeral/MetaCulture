@@ -1,12 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Transition, Dialog } from '@headlessui/react';
 import { Circles } from 'react-loader-spinner'
+import { useNavigate } from 'react-router-dom';
+
 
 export default function MintNFT() {
   const [open, setOpen] = useState(true);
   const [loading, setLoading] = useState(true);
   const [photo, setPhoto] = useState(null);
   const cancelButtonRef = useRef(null);
+
+  const navigate = useNavigate();
+
+  const handleRedirect = () => {
+    navigate('/login');
+  };
+
 
   useEffect(() => {
     const fetchPhoto = async () => {
@@ -81,7 +90,7 @@ export default function MintNFT() {
                           <button
                             type="button"
                             className="inline-flex w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-300 sm:ml-0 sm:w-auto"
-                            onClick={() => setOpen(false)}
+                            onClick={() => handleRedirect()}
                           >
                             Super
                           </button>
