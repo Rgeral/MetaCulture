@@ -5,3 +5,4 @@ predibase==2024.4.13
 pytest==7.2.2
 python-dotenv==1.0.1
 Werkzeug==3.0.2
+flask_cors
