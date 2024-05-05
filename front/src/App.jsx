@@ -7,6 +7,8 @@ import Chatbox from './chatbox';
 import Welcome from './Welcome';
 import Login from './login';
 import { isAuthenticated } from './auth';
+import Game from './game';
+import EmailUserPage from './EmailUserPage';
 
 const ProtectedRoute = ({ element, ...rest }) => {
   const [isUserAuthenticated, setIsUserAuthenticated] = React.useState(false);
@@ -39,6 +41,7 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
+          <Route path="/game" element={<Game />} />
           <Route path="/login" element={<Login/>} />
           <Route path="/test" element={<Test />} />
           <Route path="/welcome" element={<Welcome />} />
