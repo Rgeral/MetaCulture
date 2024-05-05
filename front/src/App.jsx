@@ -12,11 +12,8 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/test" element={<Test />} />
-<<<<<<< HEAD
           <Route path="/welcome" element={<Welcome/>}/>
-=======
           <Route path="/mint-nft" element={<MintNFT />} />
->>>>>>> main
         </Routes>
       </BrowserRouter>
     </>

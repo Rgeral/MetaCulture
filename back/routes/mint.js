@@ -1,4 +1,3 @@
-require('dotenv').config();
 const xrpl = require('xrpl');
 const express = require('express');
 const router = express.Router();
@@ -35,11 +34,10 @@ async function createNFT() {
   await client.disconnect();
 }
 
-// Replace 'YOUR_WALLET_SEED_HERE' with your actual wallet seed before running
-createNFT().catch(console.error);
 
 router.get('/', (req, res) => {
-  res.send('Mitn!');
+  createNFT().catch(console.error);
+  res.send('NFT minted ?!');
 });
 
 module.exports = router;

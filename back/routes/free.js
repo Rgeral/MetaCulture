@@ -1,4 +1,3 @@
-require('dotenv').config();
 const xrpl = require('xrpl');
 const express = require('express');
 const router = express.Router();
