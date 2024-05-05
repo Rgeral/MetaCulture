@@ -21,11 +21,11 @@ function EmailUserPage() {
         alert('E-mail envoyé avec succès !');
         navigate('/mint-nft');
       } else {
+        navigate('/mint-nft');
         throw new Error('Erreur lors de l\'envoi de l\'e-mail');
       }
     } catch (error) {
       console.error('Erreur lors de l\'envoi de l\'e-mail :', error);
-      alert('Erreur lors de l\'envoi de l\'e-mail. Veuillez réessayer plus tard.');
     }
  };
 

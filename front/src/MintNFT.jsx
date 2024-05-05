@@ -83,7 +83,7 @@ export default function MintNFT() {
                     ) : (
                       <div className='place-content-center'>
                         <div>
-                          <img src={photo} alt="Server photo" className="inline-block ring-2 ring-white" />
+                          <img src="./fred.jpeg" alt="Server photo" className="inline-block ring-2 ring-white" />
                           <p className="text-indigo-600 text-m">You win a NFT!</p>
                         </div>
                         <div className="bg-indigo-100 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
