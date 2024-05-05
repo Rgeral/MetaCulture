@@ -1,6 +1,6 @@
 //TODOO : METTRE LE JEU ET LINK SUR LE /MAIL
 
-import React from 'react';
+import React from "react";
 
 function Game() {
     return (
