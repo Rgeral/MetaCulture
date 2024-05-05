@@ -12,7 +12,7 @@ const mintRoute = require('./src/mint');
 const moveRoute = require('./src/move');
 const acceptRoute = require('./src/accept');
 const dbTestRoute = require('./src/dbtest');
-const addMailRoute = require('./src/add-mail');
+const addMailRoute = require('./src/addmail');
 
 app.use(cors());
 app.use('/', indexRoute);
