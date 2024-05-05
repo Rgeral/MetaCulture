@@ -12,6 +12,7 @@ const mintRoute = require('./src/mint');
 const moveRoute = require('./src/move');
 const acceptRoute = require('./src/accept');
 const dbTestRoute = require('./src/dbtest');
+const addMailRoute = require('./src/add-mail');
 
 app.use(cors());
 app.use('/', indexRoute);
@@ -23,6 +24,7 @@ app.use('/mint', mintRoute);
 app.use('/move', moveRoute);
 app.use('/accept', acceptRoute);
 app.use('/dbtest', dbTestRoute);
+app.use('/add-mail', addMailRoute);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

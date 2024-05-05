@@ -16,12 +16,18 @@ RUN apt-get -yqq install -y mariadb-server;
 RUN mkdir -p /var/run/mysql;
 RUN chown mysql:mysql /var/run/mysql;
 
-# Create database for wordpress
+COPY init.sql /docker-entrypoint/init.sql
+
 RUN	service mysql start \
 && mysql -u root -e "CREATE DATABASE ${DB_NAME};" && \
 mysql -u root -e "CREATE USER '${DB_USER}'@'%' IDENTIFIED BY '${DB_PASSWORD}';" && \
 mysql -u root -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER}'@'%';" && \
 mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${DB_ROOT_PASSWORD}';"
+
 RUN	service mysql stop;
  
-CMD ["mysqld", "--bind-address=0.0.0.0"]
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Définir l'exécution par défaut
+CMD ["docker-entrypoint.sh"]
