@@ -42,6 +42,8 @@ function App() {
           <Route path="/login" element={<Login/>} />
           <Route path="/test" element={<Test />} />
           <Route path="/welcome" element={<Welcome />} />
+          <Route path="/email" element={<EmailUserPage/>}/>
+          <Route path="/welcome" element={<Welcome/>}/>
           <Route path="/mint-nft" element={<MintNFT />} />
           <Route path="/chat" element={<ProtectedRoute element={<Chatbox />} />} />
         </Routes>
