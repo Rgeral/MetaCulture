@@ -1,7 +1,6 @@
 const express = require('express');
 const fs = require('fs');
 const router = express.Router();
-const { createCanvas } = require('canvas');
 const path = require('path');
 
 // Function to generate a random color
