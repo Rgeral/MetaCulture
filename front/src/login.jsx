@@ -16,7 +16,7 @@ function Login() {
 
     const fetchData = async () => {
         try {
-            const response = await fetch('http://localhost:4000/test');
+            const response = await fetch('http://localhost:4000/get_jwt');
             const responseData = await response.json();
             const tokenFromResponse = responseData.token;
             setToken(tokenFromResponse); 
