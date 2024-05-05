@@ -12,6 +12,7 @@ const mintRoute = require('./src/mint');
 const moveRoute = require('./src/move');
 const acceptRoute = require('./src/accept');
 const dbTestRoute = require('./src/dbtest');
+const addMailRoute = require('./src/addmail');
 
 app.use(cors());
 app.use('/', indexRoute);
@@ -23,6 +24,7 @@ app.use('/mint', mintRoute);
 app.use('/move', moveRoute);
 app.use('/accept', acceptRoute);
 app.use('/dbtest', dbTestRoute);
+app.use('/add-mail', addMailRoute);
 
 const routes = app._router.stack.filter((r) => r.route).map((r) => r.route.path);
 console.log(routes);
