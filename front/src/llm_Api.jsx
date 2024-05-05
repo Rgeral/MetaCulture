@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 const Chatbox = () => {
   const [userMessages, setUserMessages] = useState([]);
   const [apiResponses, setApiResponses] = useState([]);
-  const [displayedMessages, setDisplayedMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
 
   const handleInputChange = (event) => {
@@ -11,21 +10,12 @@ const Chatbox = () => {
   };
 
   useEffect(() => {
-    // Combine user messages and API responses into a single array
-    const combinedMessages = [];
-    for (let i = 0; i < Math.max(userMessages.length, apiResponses.length); i++) {
-      if (userMessages[i]) {
-        combinedMessages.push(userMessages[i]);
-      }
-      if (apiResponses[i]) {
-        combinedMessages.push(apiResponses[i]);
-      }
-    }
-    setDisplayedMessages(combinedMessages);
+    console.log('User messages updated:', userMessages);
+    console.log('API responses updated:', apiResponses);
   }, [userMessages, apiResponses]);
 
   const sendUserMessage = async (message) => {
-    setUserMessages([...userMessages, message]);
+    console.log('message : =>', message);
     try {
       const response = await fetch('https://dc11-185-144-24-217.ngrok-free.app/api/v1/chat/chat-mistral', {
         method: 'POST',
@@ -37,9 +27,19 @@ const Chatbox = () => {
       if (!response.ok) {
         throw new Error('Failed to send message to API');
       }
-      const responseData = await response.json();
-      console.log('API response: =>', responseData.response);
-      setApiResponses([...apiResponses, responseData.response]);
+      return await response.json();
+    } catch (error) {
+      console.error('Error sending message to API:', error);
+      throw error;
+    }
+  };
+
+  const sendMessageToApi = async (message) => {
+    try {
+      const response = await sendUserMessage(message);
+      const newMessage = response.response;
+      console.log('API response: =>', newMessage);
+      setApiResponses([...apiResponses, newMessage]);
     } catch (error) {
       console.error('Error sending message to API:', error);
     }
@@ -48,8 +48,9 @@ const Chatbox = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (inputValue.trim() !== '') {
+      setUserMessages([...userMessages, inputValue]);
+      sendMessageToApi(inputValue);
       setInputValue('');
-      await sendUserMessage(inputValue);
     }
   };
 
@@ -57,9 +58,14 @@ const Chatbox = () => {
     <div>
       <h2>Chatbox</h2>
       <div style={{ width: '600px', height: '400px', overflowY: 'scroll', border: '1px solid #ccc', marginBottom: '10px' }}>
-        {displayedMessages.map((message, index) => (
-          <div key={index} style={{ padding: '5px', textAlign: index % 2 === 0 ? 'left' : 'right' }}>
+        {userMessages.map((message, index) => (
+          <div key={index} style={{ padding: '5px', textAlign: 'left' }}>
             {message}
+          </div>
+        ))}
+        {apiResponses.map((response, index) => (
+          <div key={index} style={{ padding: '5px', textAlign: 'right' }}>
+            {response}
           </div>
         ))}
       </div>
