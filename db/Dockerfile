@@ -23,6 +23,9 @@ COPY init.sql /init.sql
 # Create database
 RUN service mysql start && \
     mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${DB_ROOT_PASSWORD}';" && \
+    service mysql stop
+
+RUN service mysql start && \
     mysql -uroot -p${DB_ROOT_PASSWORD} -e "CREATE DATABASE ${DB_NAME};" && \
     mysql -uroot -p${DB_ROOT_PASSWORD} -e "CREATE USER '${DB_USER}'@'%' IDENTIFIED BY '${DB_PASSWORD}';" && \
     mysql -uroot -p${DB_ROOT_PASSWORD} -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER}'@'%';" && \
