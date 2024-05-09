@@ -1,4 +1,4 @@
-NAME = meta-culture
+NAME = metaculture
 
 all: $(NAME)
 
@@ -22,5 +22,6 @@ re:
 
 clean: down
 	@ { docker volume ls -q ; echo null; } | xargs -r docker volume rm --force
+	@ docker images --filter=reference='$(NAME)*' -q | xargs -r docker rmi
 
 .PHONY:	all re down clean up build
