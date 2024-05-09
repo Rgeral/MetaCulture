@@ -15,6 +15,8 @@ services:
     ports:
       - "4000:4000"
     container_name: back
+    env_file:
+      - .env
     volumes:
       - "./back/:/app"
     depends_on:
@@ -35,6 +37,8 @@ services:
       - DB_PASSWORD
       - DB_ROOT_PASSWORD
     container_name: db
+    env_file:
+      - .env
     networks:
       - internal_network
 networks:
