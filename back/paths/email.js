@@ -1,14 +1,15 @@
 const express = require('express');
 const router = express.Router();
+const app = express();
 const db = require('../db');
 
 // Middleware to handle JSON requests
 router.use(express.json());
 
+// Add path
 router.post('/add', (req, res) => {
-    const { email } = req.body;
 
-    console.log(req.body);
+    const { email } = req.body;
 
     // Strict validation for the email format
     if (!email || typeof email !== 'string' || email.length > 255 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -28,10 +29,8 @@ router.post('/add', (req, res) => {
     // Execute the query with prepared parameters
     db.query(query, [email, magic_token, given], (error, results) => {
         if (error) {
-            console.error('Error:', error);
             return res.status(500).json({ error: 'Internal server error' });
         }
-        console.log('User added:', results);
         res.status(201).json({ message: 'Success' });
     });
 });
