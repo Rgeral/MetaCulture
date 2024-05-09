@@ -2,6 +2,7 @@ version: '3.8'
 services:
   back:
     environment:
+      - JWT_SECRET=${JWT_SECRET}
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
@@ -15,6 +16,8 @@ services:
     ports:
       - "4000:4000"
     container_name: back
+    env_file:
+      - .env
     volumes:
       - "./back/:/app"
     depends_on:
@@ -22,6 +25,11 @@ services:
     networks:
       - internal_network
   db:
+    environment:
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
     build:
       context: ./db
       args:
@@ -30,6 +38,8 @@ services:
       - DB_PASSWORD
       - DB_ROOT_PASSWORD
     container_name: db
+    env_file:
+      - .env
     networks:
       - internal_network
 networks:

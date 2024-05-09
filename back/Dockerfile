@@ -2,6 +2,7 @@
 FROM node:lts as base
 
 ENV DEBIAN_FRONTEND=noninteractive
+ARG JWT_SECRET=;
 ARG DB_NAME=;
 ARG DB_USER=;
 ARG DB_PASSWORD=;
