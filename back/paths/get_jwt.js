@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 
 router.get('', (req, res) => {
-    const secretKey = process.env.SECRET_KEY;
+    const secretKey = process.env.JWT_SECRET;
 
     const payload = {
         user: 'example_user'

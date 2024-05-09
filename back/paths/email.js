@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const app = express();
+const jwt = require('jsonwebtoken');
+const secretKey = process.env.JWT_SECRET;
+
 const db = require('../db');
 
 // Middleware to handle JSON requests
@@ -31,7 +33,13 @@ router.post('/add', (req, res) => {
         if (error) {
             return res.status(500).json({ error: 'Internal server error' });
         }
-        res.status(201).json({ message: 'Success' });
+
+        const payload = {
+            userId: results.insertId
+        };
+        const token = jwt.sign(payload, secretKey, { expiresIn: '1h' });
+
+        res.status(201).json({ message: 'Success', token: token });
     });
 });
 
