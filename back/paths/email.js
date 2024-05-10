@@ -84,6 +84,9 @@ router.post('/magic-link', async (req, res) => {
 
 // Magic link path
 router.get('/login', (req, res) => {
+
+    console.log(req.query['magic-token']);
+    
     return res.status(600).json({ Message: 'Test.' });
 });
 
