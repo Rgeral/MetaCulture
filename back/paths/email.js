@@ -1,25 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
-const util = require('util');
 const db = require('../db');
+const { generateUniqueHash, createQueryAsync } = require('../utils');
 
 const secretKey = process.env.JWT_SECRET;
 
 // Middleware to handle JSON requests
 router.use(express.json());
 
-// Generate unique hash
-function generateUniqueHash(input) {
-
-    const hash = crypto.createHash('sha256');
-    hash.update(input);
-    return hash.digest('hex');
-}
-
 // Query asynchrone
-const queryAsync = util.promisify(db.query).bind(db);
+const queryAsync = createQueryAsync(db);
 
 // Add path
 router.post('/add', async (req, res) => {
