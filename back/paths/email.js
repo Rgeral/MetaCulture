@@ -1,12 +1,22 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+
 const secretKey = process.env.JWT_SECRET;
 
 const db = require('../db');
 
 // Middleware to handle JSON requests
 router.use(express.json());
+
+// Generate unique hash
+function generateUniqueHash(input) {
+
+    const hash = crypto.createHash('sha256');
+    hash.update(input);
+    return hash.digest('hex');
+}
 
 // Add path
 router.post('/add', (req, res) => {
@@ -18,19 +28,16 @@ router.post('/add', (req, res) => {
         return res.status(400).json({ error: 'Invalid email format.' });
     }
 
-    // Default values
-    const magic_token = null;
-    const given = false;
-
     // Prepared SQL query to prevent SQL injection
     const query = `
-        INSERT INTO user (email, magic_token, given)
-        VALUES (?, ?, ?)
+        INSERT INTO user (email)
+        VALUES (?)
     `;
 
     // Execute the query with prepared parameters
-    db.query(query, [email, magic_token, given], (error, results) => {
+    db.query(query, [email], (error, results) => {
         if (error) {
+            console.log(error);
             return res.status(500).json({ error: 'Internal server error.' });
         }
 
@@ -54,8 +61,10 @@ router.post('/magic-link', (req, res) => {
         return res.status(400).json({ error: 'Invalid email format.' });
     }
 
+    let userId = 0;
+
     // Prepared SQL query to prevent SQL injection
-    const query = 'SELECT * FROM user WHERE email = ?';
+    let query = 'SELECT * FROM user WHERE email = ?';
 
     // Execute the query with prepared parameters
     db.query(query, [email], (err, results) => {
@@ -63,18 +72,30 @@ router.post('/magic-link', (req, res) => {
             console.error(err);
             return res.status(500).json({ error: 'Internal server error.' });
         }
+        if (results) {
+            userId = results[0].id;
+        }
+    });
 
-        let emailId = 0;
+    if (userId < 1) {
+        return res.status(404).json({ error: 'Email not founded.' });
+    }
 
-        if (results[0]) {
-            emailId = results[0].id;
+    // Prepared SQL query to prevent SQL injection
+    query = `
+        UPDATE user SET magic_token = ? WHERE id = ?
+    `;
+
+    const magicToken = generateUniqueHash(crypto.randomUUID());
+
+    // Execute the query with prepared parameters
+    db.query(query, [magicToken, userId], (error, results) => {
+        if (error) {
+            console.log(error);
+            return res.status(500).json({ error: 'Internal server error.' });
         }
 
-        if (emailId > 0) {
-            return res.status(202).json({ message: 'Please check your mailbox for the login email.' });
-        } else {
-            return res.status(404).json({ error: 'Email not founded.' });
-        }
+        return res.status(202).json({ message: 'Please check your mailbox for the login email.', debug: magicToken });
     });
 });
 
