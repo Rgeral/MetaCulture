@@ -2,10 +2,10 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const util = require('util');
+const db = require('../db');
 
 const secretKey = process.env.JWT_SECRET;
-
-const db = require('../db');
 
 // Middleware to handle JSON requests
 router.use(express.json());
@@ -18,9 +18,11 @@ function generateUniqueHash(input) {
     return hash.digest('hex');
 }
 
-// Add path
-router.post('/add', (req, res) => {
+// Query asynchrone
+const queryAsync = util.promisify(db.query).bind(db);
 
+// Add path
+router.post('/add', async (req, res) => {
     const { email } = req.body;
 
     // Strict validation for the email format
@@ -28,75 +30,65 @@ router.post('/add', (req, res) => {
         return res.status(400).json({ error: 'Invalid email format.' });
     }
 
-    // Prepared SQL query to prevent SQL injection
-    const query = `
-        INSERT INTO user (email)
-        VALUES (?)
-    `;
+    try {
+        // Prepared SQL query to prevent SQL injection
+        const query = `
+            INSERT INTO user (email)
+            VALUES (?)
+        `;
 
-    // Execute the query with prepared parameters
-    db.query(query, [email], (error, results) => {
-        if (error) {
-            console.log(error);
-            return res.status(500).json({ error: 'Internal server error.' });
-        }
+        // Execute the query with prepared parameters
+        const results = await queryAsync(query, [email]);
 
-        const payload = {
-            userId: results.insertId
-        };
+        // Generate JWT token
+        const payload = { userId: results.insertId };
         const token = jwt.sign(payload, secretKey, { expiresIn: '24h' });
 
+        // Return response
         return res.status(201).json({ token: token });
-    });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Internal server error.' });
+    }
 });
 
-
 // Magic link path
-router.post('/magic-link', (req, res) => {
-
+router.post('/magic-link', async (req, res) => {
     const { email } = req.body;
 
-    // Strict validation for the email format
+    // Email validation
     if (!email || typeof email !== 'string' || email.length > 255 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         return res.status(400).json({ error: 'Invalid email format.' });
     }
 
-    let userId = 0;
+    try {
+        // Prepared SQL query to prevent SQL injection
+        const query1 = 'SELECT * FROM user WHERE email = ?';
+        const results = await queryAsync(query1, [email]);
 
-    // Prepared SQL query to prevent SQL injection
-    let query = 'SELECT * FROM user WHERE email = ?';
-
-    // Execute the query with prepared parameters
-    db.query(query, [email], (err, results) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ error: 'Internal server error.' });
-        }
-        if (results) {
-            userId = results[0].id;
-        }
-    });
-
-    if (userId < 1) {
-        return res.status(404).json({ error: 'Email not founded.' });
-    }
-
-    // Prepared SQL query to prevent SQL injection
-    query = `
-        UPDATE user SET magic_token = ? WHERE id = ?
-    `;
-
-    const magicToken = generateUniqueHash(crypto.randomUUID());
-
-    // Execute the query with prepared parameters
-    db.query(query, [magicToken, userId], (error, results) => {
-        if (error) {
-            console.log(error);
-            return res.status(500).json({ error: 'Internal server error.' });
+        // Check email founded
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'Email not found.' });
         }
 
+        // Get userId
+        const userId = results[0].id;
+
+        // Generate magicToken
+        const magicToken = generateUniqueHash(crypto.randomUUID());
+
+        // Push magicToken in database
+        const query2 = `
+            UPDATE user SET magic_token = ? WHERE id = ?
+        `;
+        await queryAsync(query2, [magicToken, userId]);
+
+        // Return response
         return res.status(202).json({ message: 'Please check your mailbox for the login email.', debug: magicToken });
-    });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Internal server error.' });
+    }
 });
 
 // Magic link path
