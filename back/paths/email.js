@@ -23,16 +23,16 @@ router.post('/add', async (req, res) => {
 
     try {
         // Prepared SQL query to prevent SQL injection
-        const query = `
+        const query1 = `
             INSERT INTO user (email)
             VALUES (?)
         `;
 
         // Execute the query with prepared parameters
-        const results = await queryAsync(query, [email]);
+        const result1 = await queryAsync(query1, [email]);
 
         // Generate JWT token
-        const payload = { userId: results.insertId };
+        const payload = { userId: result1.insertId };
         const token = jwt.sign(payload, secretKey, { expiresIn: '24h' });
 
         // Return response
@@ -55,24 +55,24 @@ router.post('/magic-link', async (req, res) => {
     try {
         // Prepared SQL query to prevent SQL injection
         const query1 = 'SELECT * FROM user WHERE email = ?';
-        const results = await queryAsync(query1, [email]);
+        const result1 = await queryAsync(query1, [email]);
 
         // Check email founded
-        if (results.length === 0) {
+        if (result1.length === 0) {
             return res.status(404).json({ error: 'Email not found.' });
         }
 
         // Get userId
-        const userId = results[0].id;
+        const userId = result1[0].id;
 
-        // Generate magicToken
+        // Generate magic token
         const magicToken = generateUniqueHash(crypto.randomUUID());
 
-        // Push magicToken in database
+        // Push magic token in database
         const query2 = `
             UPDATE user SET magic_token = ? WHERE id = ?
         `;
-        await queryAsync(query2, [magicToken, userId]);
+        const result2 = await queryAsync(query2, [magicToken, userId]);
 
         // Return response
         return res.status(202).json({ message: 'Please check your mailbox for the login email.', debug: magicToken });
@@ -83,18 +83,47 @@ router.post('/magic-link', async (req, res) => {
 });
 
 // Magic link path
-router.get('/login', (req, res) => {
+router.get('/login', async (req, res) => {
 
     console.log(req.query['magic-token']);
+
+    const magicToken = req.query['magic-token'];
+
+    // Magic token validation
+    if (!magicToken || magicToken.length !== 64 || !/^[a-f0-9]{64}$/i.test(magicToken)) {
+        return res.status(400).json({ error: 'Invalid magic token.' });
+    }
+
+    try {
+        // Prepared SQL query to prevent SQL injection
+        const query1 = 'SELECT * FROM user WHERE magic_token = ?';
+        const result1 = await queryAsync(query1, [magicToken]);
+        
+        // Check email founded
+        if (result1.length === 0) {
+            return res.status(401).json({ error: 'Magic token not found.' });
+        }
+
+        // Get userId
+        const userId = result1[0].id;
+
+        // Push magic token in database
+        const query2 = `
+            UPDATE user SET magic_token = NULL WHERE id = ?
+        `;
+        const result2 = await queryAsync(query2, [userId]);
+
+        // Generate JWT token
+        const payload = { userId: userId };
+        const token = jwt.sign(payload, secretKey, { expiresIn: '24h' });
+
+        // Return response
+        return res.status(201).json({ token: token });
     
-    return res.status(600).json({ Message: 'Test.' });
-});
-
-
-// Middleware to handle errors and return consistent JSON
-router.use((err, req, res, next) => {
-    console.error('Unhandled error:', err);
-    res.status(err.status || 500).json({ error: err.message || 'Internal server error' });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Internal server error.' });
+    }
 });
 
 module.exports = router;
