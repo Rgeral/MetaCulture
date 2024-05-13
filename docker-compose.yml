@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.9'
 services:
   back:
     environment:
@@ -10,6 +10,10 @@ services:
       - XRP_WALLET_SEED=${XRP_WALLET_SEED}
       - XAMAN_API_KEY=${XAMAN_API_KEY}
       - XAMAN_SECRET_KEY=${XAMAN_SECRET_KEY}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
     build:
       context: ./back
     restart: always

@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const db = require('../db');
-const { generateUniqueHash, createQueryAsync } = require('../utils');
+const db = require('../utils/db');
+const mailer = require('../utils/mailer');
+const { generateUniqueHash, createQueryAsync } = require('../utils/helpers');
 
 const secretKey = process.env.JWT_SECRET;
 
@@ -62,7 +63,7 @@ router.post('/magic-link', async (req, res) => {
             return res.status(404).json({ error: 'Email not found.' });
         }
 
-        // Get userId
+        // Get userId and email
         const userId = result1[0].id;
 
         // Generate magic link
@@ -74,8 +75,17 @@ router.post('/magic-link', async (req, res) => {
         `;
         const result2 = await queryAsync(query2, [magicLink, userId]);
 
+        // Send magic token by email
+        const mailOptions = {
+            from: 'test@test.com',
+            to: email,
+            subject: "Test subject",
+            text: "Test message: " + magicLink + " "
+        };
+        await mailer.sendMail(mailOptions);
+
         // Return response
-        return res.status(202).json({ message: 'Please check your mailbox for the login email.', debug: magicLink });
+        return res.status(202).json({ message: 'Please check your mailbox for the login email.' });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ error: 'Internal server error.' });
