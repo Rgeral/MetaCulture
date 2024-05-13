@@ -65,17 +65,17 @@ router.post('/magic-link', async (req, res) => {
         // Get userId
         const userId = result1[0].id;
 
-        // Generate magic token
-        const magicToken = generateUniqueHash(crypto.randomUUID());
+        // Generate magic link
+        const magicLink = generateUniqueHash(crypto.randomUUID());
 
-        // Push magic token in database
+        // Push magic link in database
         const query2 = `
-            UPDATE user SET magic_token = ? WHERE id = ?
+            UPDATE user SET magic_link = ? WHERE id = ?
         `;
-        const result2 = await queryAsync(query2, [magicToken, userId]);
+        const result2 = await queryAsync(query2, [magicLink, userId]);
 
         // Return response
-        return res.status(202).json({ message: 'Please check your mailbox for the login email.', debug: magicToken });
+        return res.status(202).json({ message: 'Please check your mailbox for the login email.', debug: magicLink });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ error: 'Internal server error.' });
@@ -85,31 +85,31 @@ router.post('/magic-link', async (req, res) => {
 // Magic link path
 router.get('/login', async (req, res) => {
 
-    console.log(req.query['magic-token']);
+    console.log(req.query['magic-link']);
 
-    const magicToken = req.query['magic-token'];
+    const magicLink = req.query['magic-link'];
 
-    // Magic token validation
-    if (!magicToken || magicToken.length !== 64 || !/^[a-f0-9]{64}$/i.test(magicToken)) {
-        return res.status(400).json({ error: 'Invalid magic token.' });
+    // Magic link validation
+    if (!magicLink || typeof magicLink !== 'string' || magicLink.length !== 64 || !/^[a-f0-9]{64}$/i.test(magicLink)) {
+        return res.status(400).json({ error: 'Invalid magic link.' });
     }
 
     try {
         // Prepared SQL query to prevent SQL injection
-        const query1 = 'SELECT * FROM user WHERE magic_token = ?';
-        const result1 = await queryAsync(query1, [magicToken]);
-        
+        const query1 = 'SELECT * FROM user WHERE magic_link = ?';
+        const result1 = await queryAsync(query1, [magicLink]);
+
         // Check email founded
         if (result1.length === 0) {
-            return res.status(401).json({ error: 'Magic token not found.' });
+            return res.status(401).json({ error: 'Magic link not found.' });
         }
 
         // Get userId
         const userId = result1[0].id;
 
-        // Push magic token in database
+        // Push magic link in database
         const query2 = `
-            UPDATE user SET magic_token = NULL WHERE id = ?
+            UPDATE user SET magic_link = NULL WHERE id = ?
         `;
         const result2 = await queryAsync(query2, [userId]);
 
@@ -119,7 +119,7 @@ router.get('/login', async (req, res) => {
 
         // Return response
         return res.status(201).json({ token: token });
-    
+
     } catch (err) {
         console.error(err);
         return res.status(500).json({ error: 'Internal server error.' });
