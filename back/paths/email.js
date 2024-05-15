@@ -5,7 +5,7 @@ const db = require('../utils/db');
 const mailer = require('../utils/mailer');
 const { generateUniqueHash, createQueryAsync } = require('../utils/helpers');
 
-const secretKey = process.env.JWT_SECRET;
+const jwtSecret = process.env.JWT_SECRET;
 
 // Middleware to handle JSON requests
 router.use(express.json());
@@ -34,7 +34,7 @@ router.post('/add', async (req, res) => {
 
         // Generate JWT token
         const payload = { userId: result1.insertId };
-        const token = jwt.sign(payload, secretKey, { expiresIn: '24h' });
+        const token = jwt.sign(payload, jwtSecret, { expiresIn: '24h' });
 
         // Return response
         return res.status(201).json({ token: token });
@@ -129,7 +129,7 @@ router.get('/login', async (req, res) => {
 
         // Generate JWT token
         const payload = { userId: userId };
-        const token = jwt.sign(payload, secretKey, { expiresIn: '24h' });
+        const token = jwt.sign(payload, jwtSecret, { expiresIn: '24h' });
 
         // Return response
         return res.status(201).json({ token: token });
