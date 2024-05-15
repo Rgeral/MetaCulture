@@ -77,10 +77,10 @@ router.post('/magic-link', async (req, res) => {
 
         // Send magic token by email
         const mailOptions = {
-            from: 'test@test.com',
+            from: process.env.SENDING_EMAIL,
             to: email,
-            subject: "Test subject",
-            text: "Test message: " + magicLink + " "
+            subject: "Your connexion link",
+            text: "Please, use this link : " + magicLink + " "
         };
         await mailer.sendMail(mailOptions);
 
