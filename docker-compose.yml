@@ -2,6 +2,8 @@ version: '3.9'
 services:
   back:
     environment:
+      - DOMAIN_NAME=${DOMAIN_NAME}
+      - SENDING_EMAIL=${SENDING_EMAIL}
       - JWT_SECRET=${JWT_SECRET}
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}

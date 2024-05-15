@@ -80,7 +80,11 @@ router.post('/magic-link', async (req, res) => {
             from: process.env.SENDING_EMAIL,
             to: email,
             subject: "Your connexion link",
-            text: "Please, use this link : " + magicLink + " "
+            text: "Please, use this link : " + magicLink + " ",
+            html: '<p>Hello!</br></br>\
+            To access the digital artistic experience, \
+            please click on this ' + '<a href="http://' + process.env.DOMAIN_NAME + ':4000/email/login/?magic-link=' + magicLink + '">login link</a>' + '.</br></br>\
+            Regards !</p>'
         };
         await mailer.sendMail(mailOptions);
 
