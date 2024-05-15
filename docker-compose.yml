@@ -1,7 +1,9 @@
-version: '3.8'
+version: '3.9'
 services:
   back:
     environment:
+      - DOMAIN_NAME=${DOMAIN_NAME}
+      - SENDING_EMAIL=${SENDING_EMAIL}
       - JWT_SECRET=${JWT_SECRET}
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
@@ -10,6 +12,10 @@ services:
       - XRP_WALLET_SEED=${XRP_WALLET_SEED}
       - XAMAN_API_KEY=${XAMAN_API_KEY}
       - XAMAN_SECRET_KEY=${XAMAN_SECRET_KEY}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
     build:
       context: ./back
     restart: always
@@ -38,6 +44,8 @@ services:
       - DB_PASSWORD
       - DB_ROOT_PASSWORD
     container_name: db
+    ports:
+      - "3306:3306"
     env_file:
       - .env
     networks:
