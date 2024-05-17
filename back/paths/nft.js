@@ -9,7 +9,7 @@ const { createQueryAsync, urlToHex } = require('../utils/helpers');
 // Query asynchrone
 const queryAsync = createQueryAsync(db);
 
-async function createNFT() {
+async function createNFT(url) {
 
   // Connect to the XRPL
   await xrplClient.connect();
@@ -24,37 +24,48 @@ async function createNFT() {
     "Flags": 8,
     "NFTokenTaxon": 0,  // Zero means no special taxonomy
     "Fee": "10",
-    "URI":  urlToHex("https://test.com"),
+    "URI":  urlToHex(url),
   };
 
-  console.log("Submitting NFT mint transaction...");
+  console.log("Creation of the NFT is currently in progress...");
   const tx = await xrplClient.submitAndWait(nftMintTx, { wallet });
 
-  // Output the results
-  console.log(JSON.stringify(tx, null, 2));
-
-  // result = JSON.stringify(tx, null, 2);
+  const transactionResult = tx.result.meta.TransactionResult;
+  const nftAddress = tx.result.meta.nftoken_id;
 
   // Disconnect from the client
   await xrplClient.disconnect();
+
+  if (transactionResult === "tesSUCCESS") {
+    return (nftAddress);
+  } else {
+    return ("Error");
+  }
 }
 
 // Magic link path
 router.get('/get', auth, async (req, res) => {
 
   try {
+    let nftAddress = 0;
+
     // Prepared SQL query to prevent SQL injection
     const query1 = 'SELECT * FROM nft WHERE userId = ?';
     const result1 = await queryAsync(query1, [req.decoded.userId]);
 
     if (result1.length === 0) {
-      await createNFT();
+      nftAddress = await createNFT("https://www.pifgadget.fr/");
+      
+      const query2 = `
+      INSERT INTO nft (userId, address)
+      VALUES (?, ?)
+      `;
+      const result2 = await queryAsync(query2, [req.decoded.userId, nftAddress]);
+    } else {
+      nftAddress = result1[0].address;
     }
 
-    console.log(result1);
-
-    console.log(req.decoded);
-    res.status(200).json({ message: 'Hello user:' + req.decoded.userId });
+    res.status(200).json({ address: nftAddress });
 
   } catch (err) {
     console.error(err);
@@ -63,37 +74,5 @@ router.get('/get', auth, async (req, res) => {
 
 
 });
-
-
-
-// async function createNFT() {
-
-//   await xrplClient.connect();
-
-//   // Your wallet seed - replace with your actual testnet wallet seed
-//   const wallet = xrplClient.Wallet.fromSeed(process.env.XRP_WALLET_SEED);
-
-//   const ipfs_url = await pushIpfs();
-
-//   // Create a transaction to mint an NFT
-//   const nftMintTx = {
-//     "TransactionType": "NFTokenMint",
-//     "Account": wallet.address,
-//     "Flags": 8,
-//     "NFTokenTaxon": 0,  // Zero means no special taxonomy
-//     "Fee": "10",
-//     "URI": urlToHex(ipfs_url),
-//   };
-
-//   console.log("Submitting NFT mint transaction...");
-//   const tx = await client.submitAndWait(nftMintTx, { wallet });
-
-//   // Output the results
-//   console.log(JSON.stringify(tx, null, 2));
-
-//   // Disconnect from the client
-//   await client.disconnect();
-// }
-
 
 module.exports = router;

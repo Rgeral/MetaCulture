@@ -10,6 +10,5 @@ CREATE TABLE
         id INT AUTO_INCREMENT PRIMARY KEY,
         userId INT NOT NULL,
         address VARCHAR(255) NOT NULL,
-        withdrawn BOOLEAN DEFAULT FALSE,
-        FOREIGN KEY (userId) REFERENCES user (id) ON DELETE CASCADE
+        withdrawn BOOLEAN DEFAULT FALSE
     );
