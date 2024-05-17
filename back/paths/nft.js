@@ -55,7 +55,7 @@ router.get('/get', auth, async (req, res) => {
 
     if (result1.length === 0) {
       nftAddress = await createNFT("https://www.pifgadget.fr/");
-      
+
       const query2 = `
       INSERT INTO nft (userId, address)
       VALUES (?, ?)
@@ -65,14 +65,25 @@ router.get('/get', auth, async (req, res) => {
       nftAddress = result1[0].address;
     }
 
+    // Connect to the XRPL
+    await xrplClient.connect();
+
+    const nftResult = await xrplClient.request({
+      "command": "nft_info",
+      "nft_id": nftAddress
+    });
+
+    // Disconnect from the client
+    await xrplClient.disconnect();
+
+    console.log(nftResult);
+
     res.status(200).json({ address: nftAddress });
 
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: 'Internal server error.' });
   }
-
-
 });
 
 module.exports = router;
