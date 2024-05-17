@@ -4,7 +4,7 @@ const xrpl = require('xrpl');
 const xrplClient = require('../utils/xrpl');
 const auth = require('../utils/auth');
 const db = require('../utils/db');
-const { createQueryAsync, urlToHex } = require('../utils/helpers');
+const { createQueryAsync, urlToHex, hexToUrl } = require('../utils/helpers');
 
 // Query asynchrone
 const queryAsync = createQueryAsync(db);
@@ -43,6 +43,26 @@ async function createNFT(url) {
   }
 }
 
+async function infoNFT(address) {
+
+  // Connect to the XRPL
+  await xrplClient.connect();
+
+  const nftData = await xrplClient.request({
+    "command": "nft_info",
+    "nft_id": address
+  });
+
+  // Disconnect from the client
+  await xrplClient.disconnect();
+
+  const isBurned = nftData.result.is_burned;
+  const owner = nftData.result.owner;
+  const uri = hexToUrl(nftData.result.uri);
+
+  return { isBurned, owner, uri };
+}
+
 // Magic link path
 router.get('/get', auth, async (req, res) => {
 
@@ -65,20 +85,15 @@ router.get('/get', auth, async (req, res) => {
       nftAddress = result1[0].address;
     }
 
-    // Connect to the XRPL
-    await xrplClient.connect();
+    const { isBurned, owner, uri } = await infoNFT(nftAddress);
 
-    const nftResult = await xrplClient.request({
-      "command": "nft_info",
-      "nft_id": nftAddress
+    res.status(200).json(
+    {
+      address: nftAddress,
+      isBurned: isBurned,
+      owner: owner,
+      uri: uri
     });
-
-    // Disconnect from the client
-    await xrplClient.disconnect();
-
-    console.log(nftResult);
-
-    res.status(200).json({ address: nftAddress });
 
   } catch (err) {
     console.error(err);

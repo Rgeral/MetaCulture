@@ -18,8 +18,14 @@ function urlToHex(url) {
     return Buffer.from(url).toString('hex');
 }
 
+// Transform HEX to URL
+function hexToUrl(hex) {
+    return Buffer.from(hex, 'hex').toString('utf8');
+}
+
 module.exports = {
     generateUniqueHash,
     createQueryAsync,
-    urlToHex
+    urlToHex,
+    hexToUrl
 };
