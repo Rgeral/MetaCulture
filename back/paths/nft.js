@@ -4,7 +4,7 @@ const xrpl = require('xrpl');
 const xrplClient = require('../utils/xrpl');
 const auth = require('../utils/auth');
 const db = require('../utils/db');
-const { createQueryAsync } = require('../utils/helpers');
+const { createQueryAsync, urlToHex } = require('../utils/helpers');
 
 // Query asynchrone
 const queryAsync = createQueryAsync(db);
@@ -28,13 +28,15 @@ async function createNFT() {
   };
 
   console.log("Submitting NFT mint transaction...");
-  const tx = await client.submitAndWait(nftMintTx, { wallet });
+  const tx = await xrplClient.submitAndWait(nftMintTx, { wallet });
 
   // Output the results
   console.log(JSON.stringify(tx, null, 2));
 
+  // result = JSON.stringify(tx, null, 2);
+
   // Disconnect from the client
-  await client.disconnect();
+  await xrplClient.disconnect();
 }
 
 // Magic link path
@@ -64,34 +66,34 @@ router.get('/get', auth, async (req, res) => {
 
 
 
-async function createNFT() {
+// async function createNFT() {
 
-  await xrplClient.connect();
+//   await xrplClient.connect();
 
-  // Your wallet seed - replace with your actual testnet wallet seed
-  const wallet = xrplClient.Wallet.fromSeed(process.env.XRP_WALLET_SEED);
+//   // Your wallet seed - replace with your actual testnet wallet seed
+//   const wallet = xrplClient.Wallet.fromSeed(process.env.XRP_WALLET_SEED);
 
-  const ipfs_url = await pushIpfs();
+//   const ipfs_url = await pushIpfs();
 
-  // Create a transaction to mint an NFT
-  const nftMintTx = {
-    "TransactionType": "NFTokenMint",
-    "Account": wallet.address,
-    "Flags": 8,
-    "NFTokenTaxon": 0,  // Zero means no special taxonomy
-    "Fee": "10",
-    "URI": urlToHex(ipfs_url),
-  };
+//   // Create a transaction to mint an NFT
+//   const nftMintTx = {
+//     "TransactionType": "NFTokenMint",
+//     "Account": wallet.address,
+//     "Flags": 8,
+//     "NFTokenTaxon": 0,  // Zero means no special taxonomy
+//     "Fee": "10",
+//     "URI": urlToHex(ipfs_url),
+//   };
 
-  console.log("Submitting NFT mint transaction...");
-  const tx = await client.submitAndWait(nftMintTx, { wallet });
+//   console.log("Submitting NFT mint transaction...");
+//   const tx = await client.submitAndWait(nftMintTx, { wallet });
 
-  // Output the results
-  console.log(JSON.stringify(tx, null, 2));
+//   // Output the results
+//   console.log(JSON.stringify(tx, null, 2));
 
-  // Disconnect from the client
-  await client.disconnect();
-}
+//   // Disconnect from the client
+//   await client.disconnect();
+// }
 
 
 module.exports = router;

@@ -13,7 +13,13 @@ function createQueryAsync(db) {
     return util.promisify(db.query).bind(db);
 }
 
+// Transform URL to HEX
+function urlToHex(url) {
+    return Buffer.from(url).toString('hex');
+}
+
 module.exports = {
     generateUniqueHash,
-    createQueryAsync
+    createQueryAsync,
+    urlToHex
 };
