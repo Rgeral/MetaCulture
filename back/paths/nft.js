@@ -5,8 +5,8 @@ const xrplClient = require('../utils/xrpl');
 const auth = require('../utils/auth');
 const db = require('../utils/db');
 const sketch = require('../utils/sketch');
-const uploadToIPFS = require('../utils/ipfs');
-const { createQueryAsync, urlToHex, hexToUrl } = require('../utils/helpers');
+const uploadToIpfs = require('../utils/ipfs');
+const { createQueryAsync, urlToHex, hexToUrl, ipfsToUrl } = require('../utils/helpers');
 
 // Query asynchrone
 const queryAsync = createQueryAsync(db);
@@ -61,8 +61,9 @@ async function infoNFT(address) {
   const isBurned = nftData.result.is_burned;
   const owner = nftData.result.owner;
   const uri = hexToUrl(nftData.result.uri);
+  const url = ipfsToUrl(hexToUrl(nftData.result.uri));
 
-  return { isBurned, owner, uri };
+  return { isBurned, owner, uri, url };
 }
 
 // Magic link path
@@ -75,30 +76,28 @@ router.get('/get', auth, async (req, res) => {
     const query1 = 'SELECT * FROM nft WHERE userId = ?';
     const result1 = await queryAsync(query1, [req.decoded.userId]);
 
-    // if (result1.length === 0) {
-    const filePath = sketch();
-    console.log(filePath);
-    const hashIPFS = await uploadToIPFS("NFT Image", "./" + filePath);
-    console.log(hashIPFS);
-    nftAddress = await createNFT("ipfs://"+hashIPFS);
+    if (result1.length === 0) {
+      const filePath = await sketch();
+      const hashIPFS = await uploadToIpfs("NFT Image", "./" + filePath);
+      nftAddress = await createNFT("ipfs://" + hashIPFS);
+      const query2 = `
+        INSERT INTO nft (userId, address)
+        VALUES (?, ?)
+      `;
+      const result2 = await queryAsync(query2, [req.decoded.userId, nftAddress]);
+    } else {
+      nftAddress = result1[0].address;
+    }
 
-    // const query2 = `
-    // INSERT INTO nft (userId, address)
-    // VALUES (?, ?)
-    // `;
-    // const result2 = await queryAsync(query2, [req.decoded.userId, nftAddress]);
-    // } else {
-    //   nftAddress = result1[0].address;
-    // }
-
-    const { isBurned, owner, uri } = await infoNFT(nftAddress);
+    const { isBurned, owner, uri, url } = await infoNFT(nftAddress);
 
     res.status(200).json(
       {
         address: nftAddress,
         isBurned: isBurned,
         owner: owner,
-        uri: uri
+        uri: uri,
+        url: url
       });
 
   } catch (err) {

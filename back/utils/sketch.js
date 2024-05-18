@@ -11,7 +11,7 @@ function randomColor() {
 }
 
 // Route GET for the root
-function sketch() {
+async function sketch() {
     const width = 800;
     const height = 600;
     const canvas = createCanvas(width, height);

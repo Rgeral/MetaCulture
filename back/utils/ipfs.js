@@ -2,7 +2,7 @@ const fs = require('fs');
 const pinataSDK = require('@pinata/sdk');
 const pinata = new pinataSDK({ pinataJWTKey: process.env.PINATA_API_KEY });
 
-async function uploadToIPFS(name, path) {
+async function uploadToIpfs(name, path) {
 
     const readableStreamForFile = fs.createReadStream(path);
     const options = {
@@ -13,13 +13,13 @@ async function uploadToIPFS(name, path) {
             cidVersion: 0
         }
     };
-    pinata.pinFileToIPFS(readableStreamForFile, options).then((result) => {
-        console.log(result.IpfsHash);
-        return result.IpfsHash;
-    }).catch((err) => {
+    try {
+        const result = await pinata.pinFileToIPFS(readableStreamForFile, options);
+        return (result.IpfsHash);
+    } catch (err) {
         console.log(err);
         return ('Error');
-    });
+    }
 }
 
-module.exports = uploadToIPFS;
+module.exports = uploadToIpfs;

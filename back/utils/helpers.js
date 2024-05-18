@@ -23,9 +23,20 @@ function hexToUrl(hex) {
     return Buffer.from(hex, 'hex').toString('utf8');
 }
 
+// Transform IPFS to Url
+function ipfsToUrl(ipfsUrl) {
+    const prefix = "https://ipfs.io/ipfs/";
+    const ipfsPrefix = "ipfs://";
+    if (ipfsUrl.startsWith(ipfsPrefix)) {
+        return prefix + ipfsUrl.slice(ipfsPrefix.length);
+    }
+    return ipfsUrl;
+}
+
 module.exports = {
     generateUniqueHash,
     createQueryAsync,
     urlToHex,
-    hexToUrl
+    hexToUrl,
+    ipfsToUrl
 };

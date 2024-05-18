@@ -27,7 +27,6 @@ fs.readdirSync(routesDirectory).forEach((file) => {
 app.use(cors());
 
 const routes = app._router.stack.filter((r) => r.route).map((r) => r.route.path);
-console.log(routes);
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
