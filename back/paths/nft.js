@@ -26,7 +26,7 @@ async function createNFT(url) {
     "Flags": 8,
     "NFTokenTaxon": 0,  // Zero means no special taxonomy
     "Fee": "10",
-    "URI":  urlToHex(url),
+    "URI": urlToHex(url),
   };
 
   console.log("Creation of the NFT is currently in progress...");
@@ -75,29 +75,31 @@ router.get('/get', auth, async (req, res) => {
     const query1 = 'SELECT * FROM nft WHERE userId = ?';
     const result1 = await queryAsync(query1, [req.decoded.userId]);
 
-    if (result1.length === 0) {
-      filePath = sketch();
-      uploadToIPFS("NFT", filePath);
-      nftAddress = await createNFT("https://www.pifgadget.fr/");
+    // if (result1.length === 0) {
+    const filePath = sketch();
+    console.log(filePath);
+    const hashIPFS = await uploadToIPFS("NFT Image", "./" + filePath);
+    console.log(hashIPFS);
+    nftAddress = await createNFT("ipfs://"+hashIPFS);
 
-      const query2 = `
-      INSERT INTO nft (userId, address)
-      VALUES (?, ?)
-      `;
-      const result2 = await queryAsync(query2, [req.decoded.userId, nftAddress]);
-    } else {
-      nftAddress = result1[0].address;
-    }
+    // const query2 = `
+    // INSERT INTO nft (userId, address)
+    // VALUES (?, ?)
+    // `;
+    // const result2 = await queryAsync(query2, [req.decoded.userId, nftAddress]);
+    // } else {
+    //   nftAddress = result1[0].address;
+    // }
 
     const { isBurned, owner, uri } = await infoNFT(nftAddress);
 
     res.status(200).json(
-    {
-      address: nftAddress,
-      isBurned: isBurned,
-      owner: owner,
-      uri: uri
-    });
+      {
+        address: nftAddress,
+        isBurned: isBurned,
+        owner: owner,
+        uri: uri
+      });
 
   } catch (err) {
     console.error(err);

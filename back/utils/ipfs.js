@@ -1,36 +1,25 @@
-const fs = require("fs");
+const fs = require('fs');
+const pinataSDK = require('@pinata/sdk');
+const pinata = new pinataSDK({ pinataJWTKey: process.env.PINATA_API_KEY });
 
-async function uploadToIPFS(fileName, path) {
-    try {
-        const formData = new FormData();
+async function uploadToIPFS(name, path) {
 
-        const file = fs.createReadStream(path);
-        formData.append("file", file);
-
-        const pinataMetadata = JSON.stringify({
-            name: fileName,
-        });
-        formData.append("pinataMetadata", pinataMetadata);
-
-        const pinataOptions = JSON.stringify({
-            cidVersion: 0,
-        });
-        formData.append("pinataOptions", pinataOptions);
-
-        const res = await fetch("https://api.pinata.cloud/pinning/pinFileToIPFS", {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ` + process.env.PINATA_API_KEY,
-            },
-            body: formData,
-        });
-        const resData = await res.json();
-        console.log(resData);
-        return ("Success");
-    } catch (error) {
-        console.log(error);
-        return ("Error");
-    }
+    const readableStreamForFile = fs.createReadStream(path);
+    const options = {
+        pinataMetadata: {
+            name: name,
+        },
+        pinataOptions: {
+            cidVersion: 0
+        }
+    };
+    pinata.pinFileToIPFS(readableStreamForFile, options).then((result) => {
+        console.log(result.IpfsHash);
+        return result.IpfsHash;
+    }).catch((err) => {
+        console.log(err);
+        return ('Error');
+    });
 }
 
 module.exports = uploadToIPFS;
