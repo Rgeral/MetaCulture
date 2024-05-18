@@ -22,5 +22,5 @@ SMTP_PORT="587"
 SMTP_USER="<secret>"
 SMTP_PASSWORD="<secret>"
 
-XRPL_SERVER="wss://s.altnet.rippletest.net:51233"
+XRPL_SERVER="wss://clio.altnet.rippletest.net:51233"
 ```

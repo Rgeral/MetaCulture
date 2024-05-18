@@ -5,6 +5,7 @@ const xrplClient = require('../utils/xrpl');
 const auth = require('../utils/auth');
 const db = require('../utils/db');
 const sketch = require('../utils/sketch');
+const uploadToIPFS = require('../utils/ipfs');
 const { createQueryAsync, urlToHex, hexToUrl } = require('../utils/helpers');
 
 // Query asynchrone
@@ -76,6 +77,7 @@ router.get('/get', auth, async (req, res) => {
 
     if (result1.length === 0) {
       filePath = sketch();
+      uploadToIPFS("NFT", filePath);
       nftAddress = await createNFT("https://www.pifgadget.fr/");
 
       const query2 = `
