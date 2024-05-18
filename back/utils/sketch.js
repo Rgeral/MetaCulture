@@ -1,7 +1,6 @@
-const express = require('express');
 const fs = require('fs');
-const router = express.Router();
 const path = require('path');
+const { createCanvas } = require('canvas');
 
 // Function to generate a random color
 function randomColor() {
@@ -12,7 +11,7 @@ function randomColor() {
 }
 
 // Route GET for the root
-function sketch(){
+async function sketch() {
     const width = 800;
     const height = 600;
     const canvas = createCanvas(width, height);
@@ -63,12 +62,11 @@ function sketch(){
     const buffer = canvas.toBuffer('image/jpeg');
 
     // Save image to file
-    const fileName = `./generated_images/generated_image_${Date.now()}.jpg`;
+    const fileName = `./tmp/${Date.now()}.jpg`;
     const filePath = path.join(fileName);
     fs.writeFileSync(filePath, buffer);
     // Respond with image data
     return filePath;
 };
 
-module.exports = router;
 module.exports = sketch;
