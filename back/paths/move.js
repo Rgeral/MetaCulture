@@ -38,7 +38,7 @@ async function createSellOffer(nftId) {
 
 router.get('/', (req, res) => {
 
-    createSellOffer("0008000044FE7CB1B3249BDDAFB2486A8F5A02C74EA85190616D60AF00060314")
+    createSellOffer("0008000044FE7CB1B3249BDDAFB2486A8F5A02C74EA851904CCD47E60006034B")
     res.send('move ?!');
 });
 

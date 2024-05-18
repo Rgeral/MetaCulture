@@ -6,6 +6,7 @@ const auth = require('../utils/auth');
 const db = require('../utils/db');
 const sketch = require('../utils/sketch');
 const uploadToIpfs = require('../utils/ipfs');
+const getXumm = require('../utils/xumm');
 const { createQueryAsync, urlToHex, hexToUrl, ipfsToUrl } = require('../utils/helpers');
 
 // Query asynchrone
@@ -26,7 +27,7 @@ async function createNFT(url) {
     "Flags": 8,
     "NFTokenTaxon": 0,  // Zero means no special taxonomy
     "Fee": "10",
-    "URI": urlToHex(url),
+    "URI": urlToHex(url)
   };
 
   console.log("Creation of the NFT is currently in progress...");
@@ -66,7 +67,47 @@ async function infoNFT(address) {
   return { isBurned, owner, uri, url };
 }
 
-// Magic link path
+async function sellOffer(nftAddress) {
+
+  await xrplClient.connect();
+  const wallet = xrpl.Wallet.fromSeed(process.env.XRP_WALLET_SEED);
+
+  const sellOfferTx = {
+    "TransactionType": "NFTokenCreateOffer",
+    "Account": wallet.address,
+    "NFTokenID": nftAddress,
+    "Amount": "0",
+    "Flags": xrpl.NFTokenCreateOfferFlags.tfSellNFToken
+  };
+
+  const tx = await xrplClient.submitAndWait(sellOfferTx, { wallet });
+  await xrplClient.disconnect();
+
+  // Check if the transaction was successful
+  if (tx.result.meta.TransactionResult === "tesSUCCESS") {
+    return (tx.result.meta.offer_id);
+  } else {
+    return ('Error');
+  }
+}
+
+async function acceptOffer(offerId) {
+
+  const xumm = getXumm();
+
+  // Generate accept offer
+  const payload = await xumm.payload?.create({
+    txjson: {
+      TransactionType: "NFTokenAcceptOffer",
+      NFTokenSellOffer: offerId,
+    },
+  });
+
+  // Return payload
+  return payload;
+}
+
+// Get path
 router.get('/get', auth, async (req, res) => {
 
   try {
@@ -100,6 +141,25 @@ router.get('/get', auth, async (req, res) => {
         url: url
       });
 
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Internal server error.' });
+  }
+});
+
+// Withdrawn path
+router.get('/withdrawn', auth, async (req, res) => {
+
+  try {
+    // Prepared SQL query to prevent SQL injection
+    const query1 = 'SELECT * FROM nft WHERE userId = ?';
+    const result1 = await queryAsync(query1, [req.decoded.userId]);
+    const nftAddress = result1[0].address;
+
+    const offerId = await sellOffer(nftAddress);
+    const xummRes = await acceptOffer(offerId);
+
+    res.status(200).json({ xummUrl: xummRes.next.always, xummQr: xummRes.refs.qr_png });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: 'Internal server error.' });

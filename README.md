@@ -17,6 +17,8 @@ XRP_WALLET_SEED="<secret>"
 XAMAN_API_KEY="<secret>"
 XAMAN_SECRET_KEY="<secret>"
 
+PINATA_API_KEY="<secret>"
+
 SMTP_HOST="smtp-relay.brevo.com"
 SMTP_PORT="587"
 SMTP_USER="<secret>"

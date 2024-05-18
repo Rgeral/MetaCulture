@@ -15,7 +15,7 @@ async function acceptOffer() {
     // Extraire les paramètres `userToken` et `offerId` de la requête
     // const query = getQuery(event);
     //const userToken = query.userToken;
-    const offerId = "A4578ED83E87BD10E9FB43626D7AE24AB974852EFF3D69E00C12F51509065E78";
+    const offerId = "2868296DC8F59CA843F9ACB359A0DBF38B676B607E478348C92A19EFF2109345";
 
     // Vérifier la présence des paramètres requis
     // if (!userToken) {
