@@ -31,6 +31,19 @@ services:
       - db
     networks:
       - internal_network
+  front:
+    build:
+      context: ./front
+    restart: always
+    ports:
+      - "5173:5173"
+    container_name: front
+    env_file:
+      - .env
+    volumes:
+      - "./front/:/app"
+    networks:
+      - internal_network
   db:
     environment:
       - DB_NAME=${DB_NAME}
