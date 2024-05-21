@@ -14,7 +14,7 @@ config = {
     "DB_PASSWORD": os.getenv("DB_PASSWORD"),
     "HOST": os.getenv("HOST"),
     "PORT": os.getenv("PORT"),
-    "MISTRAL_API_KEY": os.getenv("MISTRAL_API_KEY"),
+    "PREDIBASE_API_KEY": os.getenv("PREDIBASE_API_KEY"),
 }
 
 """

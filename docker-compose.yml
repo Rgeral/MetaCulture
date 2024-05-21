@@ -36,7 +36,7 @@ services:
       context: ./front
     restart: always
     ports:
-      - "5173:5173"
+      - "3000:5173"
     container_name: front
     env_file:
       - .env
@@ -60,6 +60,18 @@ services:
     container_name: db
     env_file:
       - .env
+    networks:
+      - internal_network
+  ai:
+    environment:
+      - PREDIBASE_API_KEY=${PREDIBASE_API_KEY}
+    build:
+      context: ./ai
+    container_name: ai
+    env_file:
+      - .env
+    volumes:
+      - "./ai/:/app"
     networks:
       - internal_network
 networks:

@@ -48,7 +48,8 @@ function App() {
           <Route path="/email" element={<EmailUserPage/>}/>
           <Route path="/welcome" element={<Welcome/>}/>
           <Route path="/mint-nft" element={<MintNFT />} />
-          <Route path="/chat" element={<ProtectedRoute element={<Chatbox />} />} />
+          {/* <Route path="/chat" element={<ProtectedRoute element={<Chatbox />} />} /> */}
+          <Route path="/chat" element={<Chatbox/>} />
         </Routes>
       </BrowserRouter>
     </>
