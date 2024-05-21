@@ -9,7 +9,7 @@ from chat_mistral import llm_prompts
 from predibase import PredibaseClient
 
 
-PREDIBASE_API_KEY = config["MISTRAL_API_KEY"]
+PREDIBASE_API_KEY = config["PREDIBASE_API_KEY"]
 
 
 class Model(Enum):

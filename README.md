@@ -25,4 +25,6 @@ SMTP_USER="<secret>"
 SMTP_PASSWORD="<secret>"
 
 XRPL_SERVER="wss://clio.altnet.rippletest.net:51233"
+
+PREDIBASE_API_KEY="<secret>"
 ```
