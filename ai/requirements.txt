@@ -5,4 +5,5 @@ predibase==2024.4.13
 pytest==7.2.2
 python-dotenv==1.0.1
 Werkzeug==2.2.3
+validator===0.7.1
 flask_cors
