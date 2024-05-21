@@ -27,7 +27,7 @@ const Chatbox = () => {
   const sendUserMessage = async (message) => {
     setUserMessages([...userMessages, message]);
     try {
-      const response = await fetch('https://dc11-185-144-24-217.ngrok-free.app/api/v1/chat/chat-mistral', {
+      const response = await fetch('http://localhost:777/api/v1/chat/chat-mistral', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

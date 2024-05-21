@@ -12,8 +12,8 @@ config = {
     "DB_NAME": os.getenv("DB_NAME"),
     "DB_USERNAME": os.getenv("DB_USERNAME"),
     "DB_PASSWORD": os.getenv("DB_PASSWORD"),
-    "HOST": os.getenv("HOST"),
-    "PORT": os.getenv("PORT"),
+    "HOST": "0.0.0.0",
+    "PORT": 777,
     "PREDIBASE_API_KEY": os.getenv("PREDIBASE_API_KEY"),
 }
 

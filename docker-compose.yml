@@ -67,6 +67,8 @@ services:
       - PREDIBASE_API_KEY=${PREDIBASE_API_KEY}
     build:
       context: ./ai
+    ports:
+      - "777:777"
     container_name: ai
     env_file:
       - .env

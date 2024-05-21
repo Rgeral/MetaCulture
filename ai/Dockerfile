@@ -15,4 +15,4 @@ COPY requirements.txt .
 
 RUN pip install --break-system-packages -r requirements.txt
 
-CMD ["sh", "-c", "sleep infinity"]
+CMD ["python3", "./run.py"]
