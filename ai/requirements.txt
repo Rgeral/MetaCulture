@@ -1,7 +1,7 @@
 Flask==2.0.2
 loguru==0.7.2
 openai==0.28.1
-predibase==2024.4.13
+predibase===2024.6.4
 pytest==7.2.2
 python-dotenv==1.0.1
 Werkzeug==2.2.3
